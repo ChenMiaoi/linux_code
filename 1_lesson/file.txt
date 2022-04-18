@@ -36,3 +36,42 @@ sigset_t信号集：
 	int sigismember(sigset_t* set, int signo);
 		#判定signo位置的信号是否在set指向的信号集中
 ##注意：在任何操作前，必须通过sigismember或者sigfillset初始化。同时禁止一切的位操作符
+
+block表也被称为信号屏蔽字
+
+int sigprocmask(int how, const sigset_t* set, sigset_t* oset);
+# 返回值：成功返回0,失败返回-1
+# 假设当前信号屏蔽字为mask
+how :
+	1. SIG_BLOCK	set包含了我们希望添加到当前信号屏蔽字的信号，相当于mask = mask|set
+	2. SIG_UNBLOCK	set包含了我们希望从当前信号屏蔽字中解除阻塞的信号，相当于mask = mask&~set
+	3. SIG_SETMASK	设置当前信号屏蔽字为set所指向的值，相当于mask=set
+set & oset :
+	如果oset是非空指针，则读取进程的当前信号屏蔽字通过oset参数传出。如果set是非空指针，则更改进程的信号的屏蔽字，参数how指定如何更改。如果set&oset都是非空指针，则将原来的信号屏蔽字备份到oset中，然后根据set和how更改信号屏蔽字
+
+int sigpending(sigset_t* set);
+# 获取当前(set)信号的pending信号集
+# 返回值：成功返回0,失败返回-1
+
+
+# 一个信号被递达是在：从内核切换回用户态时，进行信号相关信息的检测
+内核(kernel)态：内核执行 -- 系统接口 -- 权限大
+用户(user)态：用户执行 -- 自定义数据 -- 权限微小
+陷入内核，返回到用户态：当陷入内核的时候，就是操作系统来执行代码，有一个CPU寄存器(cr)专门存储状态
+	中断、异常或系统调用都可以进入内核
+为什么不在内核态处理信号？
+	防止非法操作。
+
+信号捕捉：
+	signal();
+	sigaction(int signum, const struct sigaction* act, struct sigaction* oldact);
+	参数：const struct sigaction* act
+		1. act.sa_handler = handler
+		2. act.sa_flags = 0
+		3. sigemptyset(act.sa_mask)
+
+为什么程序中途出错，到后面才会显示报错呢？
+	因为报错的信号从内核到用户是有一段处理时间的。
+
+如果多个执行流在一个函数中没有引发问题，被称为可重入函数
+
