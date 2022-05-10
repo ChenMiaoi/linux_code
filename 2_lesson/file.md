@@ -66,7 +66,21 @@ Windows有一个TCB的线程数据结构
 # POSIX -- NPTL原生线程库  
 
 - pthread	-- 需要指定链接-pthread
-    - int pthread_create(pthread_t* thread, const pthread_attr_t* attr, void *(*statr_routine)(void*), void* arg);
+    - int pthread_create(pthread_t\* thread, const pthread_attr_t\* attr, void \*(\*statr_routine)(void\*), void\* arg);
         - typedef pthread_t unsigned long int
     - pthread_t pthread_self(void);
         - 所谓的线程ID，就是线程在线程库线程控制块的起始位置
+- 线程等待
+	- pthread-join(pthread_t thread, void\*\* retval);
+
+- 线程退出
+	- pthread_exit(void\* retval);
+
+- 线程取消
+	- pthread_cancel(pthread_t thread);
+		- 返回值的类型是一个宏：PTHREAD_CANCELED
+		``` C
+		#define PTHREAD_CANCELED (void\*)-1
+		```
+
+
