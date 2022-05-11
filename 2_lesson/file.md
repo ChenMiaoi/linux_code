@@ -71,7 +71,7 @@ Windows有一个TCB的线程数据结构
     - pthread_t pthread_self(void);
         - 所谓的线程ID，就是线程在线程库线程控制块的起始位置
 - 线程等待
-	- pthread-join(pthread_t thread, void\*\* retval);
+	- pthread_join(pthread_t thread, void\*\* retval);
 
 - 线程退出
 	- pthread_exit(void\* retval);
@@ -82,5 +82,20 @@ Windows有一个TCB的线程数据结构
 		``` C
 		#define PTHREAD_CANCELED (void\*)-1
 		```
+- 分离线程
+	- 默认情况下，新创建的线程是joinable的，线程退出后，需要对其pthread_jion操作，否则无法释放资源，从而造成系统泄漏
+	- 如果不关心线程的返回值，join是一种负担，因此，我们可以告诉系统，当线程退出后，自动释放线程资源
+		- int pthread_detach(pthread_t thread);
+		> 可以是线程组内其他线程对目标线程进行分离，也可以是线程自己分离：
+		- pthread_detach(pthread_self());
 
-
+# Linux线程互斥
+	- 临界资源
+	> 被多个执行流访问的资源被叫做临界资源
+	- 临界区
+	> 访问临界资源的代码被叫做临界区
+	- 互斥锁
+		- pthread_mutex_init(pthread_mutex_t* restrict mutex, const pthread_mutexattr_t* restrict attr);
+		- pthread_mutex_destory(pthread_mutex_t* mutex);
+		- pthread_mutex_lock(pthread_mutex_t* mutex);
+		- pthread_mutex_unlock(pthread_mutex_t* mutex);
