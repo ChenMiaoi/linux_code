@@ -189,3 +189,56 @@ unlock:
 	1. 死锁检测算法
 	2. 银行家算法
 
+# Linux线程同步
+> **完成临界区与临界资源访问时具有一定的顺序性**
+> **在保证数据安全的情况下(一般使用加锁来保证)，让多个执行流按照特定的顺序进行临界资源的访问**
+
+- 为什么要存在同步？
+> **多线程协同高效完成某些事情**
+
+- 如何编码实现
+	1. 条件如果不满足，等待，释放锁
+	2. 通知机制
+
+- 条件变量
+```C
+	int pthread_cond_init(pthread_cond_t* restrict cond, const pthread_condattr_t* restrict attr);
+	int pthread_cond_destroy(pthread_cond_t* cond);
+	pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+```
+
+- 条件等待
+```C
+	int pthread_cond_wait(pthread_cond_t* restrict cond, pthread_mutex_t* restrict mutex);
+	int pthread_cond_timewait(pthread_cond_t* restrict cond, pthread_mutex_t* restrict mutex, const struct timesoec* restrict abstime);
+```
+
+- 条件信号
+```C
+	int pthread_cond_signal(pthread_cond_t* cond);
+```
+
+- cond
+```C
+struct{
+	int value;
+	wait_queue* head;
+}
+```
+
+# 生产者消费者模型
+> 通过一个容器来解决生产者和消费者之间的强耦合问题。生产者和消费者之间彼此不直接通讯，而是通过阻塞队列来进行通讯，所以生产者生产完数据之后不用等待消费者处理，直接扔给阻塞队列，消费者不找生产者要数据，而是直接从阻塞队列里面取，阻塞队列就相当于一个缓冲区，平衡了生产者和消费者的处理能力。这个阻塞队列就是用来给生产者解耦的
+>> **在这里：**
+>> **生产者，消费者：进程、线程**
+>> **空间、交易场所：一块“内存快”**
+>> **产品：数据**
+>> "321关系"
+>> 3:三种关系，生vs生(互斥)， 生vs消(同步)， 消vs消(互斥)
+>> 2:两种角色，生产者和消费者
+>> 1:一个交易
+
+
+- 模型优点
+	1. 解耦
+	2. 支持并发
+	3. 
