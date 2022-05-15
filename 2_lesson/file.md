@@ -212,6 +212,11 @@ unlock:
 	int pthread_cond_wait(pthread_cond_t* restrict cond, pthread_mutex_t* restrict mutex);
 	int pthread_cond_timewait(pthread_cond_t* restrict cond, pthread_mutex_t* restrict mutex, const struct timesoec* restrict abstime);
 ```
+> **为什么wait需要带一把锁？**
+> **等待需要判断条件是否满足，如果要判断需要进入临界区，因此必须带入一把锁，且wait时必须要释放锁**
+> **在调用该函数的时候，自动会释放锁**
+> **当该函数被返回时，返回到临界区内，所以该函数会让该线程重新持有该锁**
+
 
 - 条件信号
 ```C
@@ -242,3 +247,5 @@ struct{
 	1. 解耦
 	2. 支持并发
 	3. 
+
+
