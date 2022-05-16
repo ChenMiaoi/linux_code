@@ -248,4 +248,33 @@ struct{
 	2. 支持并发
 	3. 
 
+# POSIX信号量
 
+> 信号量(信号灯)本质是一个计数器！描述临界资源有效个数的计数器
+
+- 为什么？
+> 因为临界资源可以看成多份不冲突的，提高效率
+
+- 怎么用？
+	- 初始化
+```C
+	int sem_init(sem_t* sem, int pshared, unsigned int value);
+	//pshared：0表示线程间共享，非零表示进程间共享
+	//value：信号量初始值
+```
+	- 销毁
+```C
+	int sem_destroy(sem_t* sem);
+```
+	- 等待
+```C
+	int sem_wait(sem_t* sem);//P操作，使信号量--
+```
+	- 发布
+```C
+	int sem_post(sem_t* sem)//V操作，归还资源，使信号量++
+```
+
+> **二元信号量相当于互斥锁**
+
+# 基于环形队列的生产消费模型
