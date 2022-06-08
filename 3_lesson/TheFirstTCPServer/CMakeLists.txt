@@ -11,3 +11,5 @@ add_executable(TheFirstTCPServer
         tcp_client.hpp
         tcp_sevrer.cc
         tcp_sevrer.hpp)
+
+add_executable(test test.cc)
