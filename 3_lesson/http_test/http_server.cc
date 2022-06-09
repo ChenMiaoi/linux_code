@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <netinet/in.h>
+#include <string>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -47,7 +49,29 @@ int main(){
             recv(sock, buffer, sizeof(buffer), 0);
             std::cout << "######################## http request begin #############################" << std::endl;
             std::cout << buffer << std::endl;
-            std::cout << "######################## http request end   #############################" << std::endl;
+            std::cout << "#######################-# http request end   #############################" << std::endl;
+
+#define PAGE "./idex.html"
+            std::ifstream in(PAGE);
+            if (in.is_open()){
+                in.seekg(0, std::ios::end);
+                size_t lens = in.tellg();
+                in.seekg(0, std::ios::beg);
+                char* file = new char[lens];
+                in.read(file, lens);
+                in.close();
+
+                std::string status_line = "http/1.0 200 OK\n";
+                std::string response_header = "Content-Length: " + std::to_string(lens);
+                response_header += "\n";
+                std::string blank = "\n";
+                send(sock, status_line.c_str(), status_line.size(), 0);
+                send(sock, response_header.c_str(), response_header.size(), 0);
+                send(sock, blank.c_str(), blank.size(), 0);
+                send(sock, file, lens, 0);
+                delete[] file;
+            }
+            close(sock);
             exit(0);
         }
         waitpid(-1, nullptr, 0);
