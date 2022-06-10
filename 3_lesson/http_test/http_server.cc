@@ -16,6 +16,8 @@ int main(){
         return 1;
     }
 
+    int flag = 1;
+    setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
     struct sockaddr_in local;
     memset(&local, 0, sizeof(local));
     local.sin_family = AF_INET;
@@ -51,6 +53,7 @@ int main(){
             std::cout << buffer << std::endl;
             std::cout << "#######################-# http request end   #############################" << std::endl;
 
+            std::cout << "######################## http response begin #############################" << std::endl;
 #define PAGE "./idex.html"
             std::ifstream in(PAGE);
             if (in.is_open()){
@@ -61,14 +64,18 @@ int main(){
                 in.read(file, lens);
                 in.close();
 
-                std::string status_line = "http/1.0 200 OK\n";
+                std::string status_line = "http/1.1 307 Temporary Redirect\r\n";
                 std::string response_header = "Content-Length: " + std::to_string(lens);
-                response_header += "\n";
-                std::string blank = "\n";
+                response_header += "\r\n";
+                response_header += "location: https://qq.com//\r\n";
+                std::string blank = "\r\n";
+                //std::string total = status_line + response_header + blank;
                 send(sock, status_line.c_str(), status_line.size(), 0);
                 send(sock, response_header.c_str(), response_header.size(), 0);
                 send(sock, blank.c_str(), blank.size(), 0);
+                //send(sock, total.c_str(), total.size(), 0);
                 send(sock, file, lens, 0);
+                std::cout << "######################## http response end #############################" << std::endl;
                 delete[] file;
             }
             close(sock);
