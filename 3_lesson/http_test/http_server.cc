@@ -64,10 +64,12 @@ int main(){
                 in.read(file, lens);
                 in.close();
 
-                std::string status_line = "http/1.1 307 Temporary Redirect\r\n";
+                //std::string status_line = "http/1.1 307 Temporary Redirect\r\n";
+                std::string status_line = "http/1.1 200 OK\r\n";
                 std::string response_header = "Content-Length: " + std::to_string(lens);
                 response_header += "\r\n";
-                response_header += "location: https://qq.com//\r\n";
+                response_header += "Set-Cookie: abcdefg12345\r\n";
+                //response_header += "location: https://qq.com//\r\n";
                 std::string blank = "\r\n";
                 //std::string total = status_line + response_header + blank;
                 send(sock, status_line.c_str(), status_line.size(), 0);
